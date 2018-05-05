@@ -42,26 +42,26 @@ public class VizNetwork {
     public void vizSetupNetwork() {
         // Make input neurons
         for (int i = 0; i < input.length - 1; i++) {
-            input[i] = new InputNeuron(-300, 0 + i * 50, p);
+            input[i] = new InputNeuron(-300, 0 + i * 50,"i"+i,  p);
         }
 
         // Make hidden neurons
         for (int j = 0; j < hiddenLayers; j++) {
             for (int i = 0; i < hidden[j].length - 1; i++) {
-                hidden[j][i] = new HiddenNeuron(-100 + j * 100, 00 + i * 50, p);
+                hidden[j][i] = new HiddenNeuron(-100 + j * 100, 00 + i * 50,"h"+j+""+i, p);
             }
         }
 
         // Make bias neurons
-        input[input.length - 1] = new InputNeuron(-300, 0 + (input.length - 1) * 50, 1, p);
+        input[input.length - 1] = new InputNeuron(-300, 0 + (input.length - 1) * 50, 1,"ib", p);
 
         for (int j = 0; j < hiddenLayers; j++) {
-            hidden[j][hidden[0].length - 1] = new HiddenNeuron(-100 + j * 100, 0 + (hidden[0].length - 1) * 50, 1, p);
+            hidden[j][hidden[0].length - 1] = new HiddenNeuron(-100 + j * 100, 0 + (hidden[0].length - 1) * 50, 1,"hb"+j, p);
         }
 
         // Make output neuron
         for (int i = 0; i < output.length - 0; i++) {
-            output[i] = new OutputNeuron(400, 0 + i * 50, p);
+            output[i] = new OutputNeuron(400, 0 + i * 50, "ob",p);
         }
 
 
@@ -114,8 +114,11 @@ public class VizNetwork {
             }
         }
 
+        System.out.println("biases"+biases.length);
+        System.out.println("hiddenLayers"+hiddenLayers);
+
         for (int i = 0; i < output.length; i++) {
-            output[i].update(weights[hiddenLayers-1], biases[hiddenLayers-1]);
+            output[i].update(weights[hiddenLayers-0], biases[hiddenLayers-0]);
             output[i].output = (float) layers[hiddenLayers+1].get(0);
         }
 

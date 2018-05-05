@@ -5,10 +5,8 @@ import org.ejml.simple.SimpleMatrix;
 import processing.core.PApplet;
 
 
-
-
 public class Main extends PApplet {
-    public static final int DEBUG = 0;
+    public static final int DEBUG = 1;
 
     NeuralNetwork nn;
 
@@ -31,7 +29,7 @@ public class Main extends PApplet {
     public void setup() {
         smooth();
 
-        nn = new NeuralNetwork(2, 3,12,1,this);
+        nn = new NeuralNetwork(2, 2, 4, 1, this);
 
         /*// Training
         for (int i = 0; i < 5000; i++) {
@@ -41,28 +39,23 @@ public class Main extends PApplet {
             nn.train(test, xor(test));
         }*/
 
-//        float weight=1;
-//        float sw = map(weight * 1, 0, VizNetwork.max_weight, 0, 2);
-//        System.out.println("VizNetwork.max_weight"+VizNetwork.max_weight);
-//        System.out.println(sw);
+
     }
 
     @Override
     public void draw() {
         if (right_mouse_pressed) {
             train();
+//            System.out.println(nn.biases[1]);
         }
 
 
+        //draw
         background(0);
 
         pushMatrix();
         translate(width / 2, height / 4);
-
-
         nn.display();
-
-
         popMatrix();
 
         //stats
@@ -78,12 +71,6 @@ public class Main extends PApplet {
 
 
     private void train() {
-//        SimpleMatrix m= nn.weights[1];
-//        System.out.println(m);
-
-
-
-
         count++;
 
         double[] test = new double[2];
@@ -91,10 +78,10 @@ public class Main extends PApplet {
         test[1] = (int) random(2);
 
 //            float guess = nn.feedForward(test);
-        float guess =(float)( nn.guess(test)[0]);
+        float guess = (float) (nn.guess(test)[0]);
         nn.train(test, new double[]{xor(test)});
 
-        float error = xor(test)-guess ;
+        float error = xor(test) - guess;
         if (guess < 0.5f) {
             guess = 0;
         } else {
@@ -103,7 +90,6 @@ public class Main extends PApplet {
 
         System.out.print("[" + (int) test[0] + "," + (int) test[1] + "] --> " + guess
                 + "   error " + error);
-
 
 
         if (guess != xor(test)) {

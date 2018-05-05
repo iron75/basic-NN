@@ -33,7 +33,7 @@ public class NeuralNetwork {
     private double learningRate;
 
     private String activationFunctionKey;
-    private double rate;
+
 
     // Constructor
     // Generate a new neural network with 1 hidden layer with the given amount of nodes in the individual layers
@@ -58,7 +58,6 @@ public class NeuralNetwork {
     }
 
     private void initializeDefaultValues() {
-
         this.setLearningRate(0.1);
 
         // Sigmoid is the default ActivationFunction
@@ -203,12 +202,7 @@ public class NeuralNetwork {
         vizNetwork=new VizNetwork( inputNodes,  hiddenLayers,  hiddenNodes,  outputNodes,p);
     }
 
-    float function_mutate(float val) {
-        if (Math.random() < rate) {
-            return (float) Math.random() * 2 - 1;
-        } else
-            return val;
-    }
+
 
     public void display(){
         if(vizNetwork!=null)
