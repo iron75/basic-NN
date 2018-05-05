@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class VizNetwork {
     PApplet p;
-    NeuralNetwork nn;
+//    NeuralNetwork nn;
 
     // Layers
     InputNeuron[] input;
@@ -21,18 +21,18 @@ public class VizNetwork {
 
     public static float max_weight = -1;
 
-    public VizNetwork(NeuralNetwork neuralNetwork, PApplet p) {
+    public VizNetwork(int inputNodes, int hiddenLayers, int hiddenNodes, int outputNodes, PApplet p) {
         this.p = p;
-        nn = neuralNetwork;
-        hidden = new HiddenNeuron[nn.hiddenLayers][];
+//        nn = neuralNetwork;
+        hidden = new HiddenNeuron[hiddenLayers][];
 
         //init
-        input = new InputNeuron[nn.inputNodes + 1];  // Got to add a bias input
+        input = new InputNeuron[inputNodes + 1];  // Got to add a bias input
         for (int i = 0; i < hidden.length; i++) {
-            hidden[i] = new HiddenNeuron[nn.hiddenNodes + 1];
+            hidden[i] = new HiddenNeuron[hiddenNodes + 1];
         }
-        hiddenLayers = hidden.length;
-        output = new OutputNeuron[nn.outputNodes + 0];
+        this.hiddenLayers = hiddenLayers;
+        output = new OutputNeuron[outputNodes + 0];
 
 
         //setup
