@@ -11,7 +11,7 @@ public class Main extends PApplet {
     NeuralNetwork nn;
 
     private boolean right_mouse_pressed;
-
+ 
     int count, countTmp;
     int success, successTmp;
 
