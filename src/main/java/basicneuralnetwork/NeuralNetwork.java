@@ -17,13 +17,13 @@ public class NeuralNetwork {
     private Random random = new Random();
 
     // Dimensions of the neural network
-    private int inputNodes;
-    private int hiddenLayers;
-    private int hiddenNodes;
-    private int outputNodes;
+    public int inputNodes;
+    public int hiddenLayers;
+    public int hiddenNodes;
+    public int outputNodes;
 
-    private SimpleMatrix[] weights;
-    private SimpleMatrix[] biases;
+    public SimpleMatrix[] weights;
+    public SimpleMatrix[] biases;
 
     private double learningRate;
 
