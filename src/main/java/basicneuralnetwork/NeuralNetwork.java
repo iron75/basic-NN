@@ -3,16 +3,21 @@ package basicneuralnetwork;
 import basicneuralnetwork.activationfunctions.*;
 import basicneuralnetwork.utilities.FileReaderAndWriter;
 import basicneuralnetwork.utilities.MatrixConverter;
+import basicneuralnetwork.visualize.Neuron;
+import basicneuralnetwork.visualize.VizNetwork;
 import org.ejml.simple.SimpleMatrix;
+import processing.core.PApplet;
 
+import java.util.Arrays;
 import java.util.Random;
 
 /**
  * Created by KimFeichtinger on 04.03.18.
  */
 public class NeuralNetwork {
+    public transient VizNetwork vizNetwork;
 
-    private ActivationFunctionFactory activationFunctionFactory= new ActivationFunctionFactory();
+    private ActivationFunctionFactory activationFunctionFactory = new ActivationFunctionFactory();
 
     private Random random = new Random();
 
@@ -28,17 +33,18 @@ public class NeuralNetwork {
     private double learningRate;
 
     private String activationFunctionKey;
+    private double rate;
 
     // Constructor
     // Generate a new neural network with 1 hidden layer with the given amount of nodes in the individual layers
-    public NeuralNetwork(int inputNodes, int hiddenNodes, int outputNodes) {
-        this(inputNodes, 1, hiddenNodes, outputNodes);
+    public NeuralNetwork(int inputNodes, int hiddenNodes, int outputNodes,PApplet p) {
+        this(inputNodes, 1, hiddenNodes, outputNodes, p);
     }
 
     // Constructor
     // Generate a new neural network with a given amount of hidden layers with the given amount of nodes in the individual layers
     // Every hidden layer will have the same amount of nodes
-    public NeuralNetwork(int inputNodes, int hiddenLayers, int hiddenNodes, int outputNodes) {
+    public NeuralNetwork(int inputNodes, int hiddenLayers, int hiddenNodes, int outputNodes,PApplet p) {
         this.inputNodes = inputNodes;
         this.hiddenLayers = hiddenLayers;
         this.hiddenNodes = hiddenNodes;
@@ -47,9 +53,12 @@ public class NeuralNetwork {
         initializeDefaultValues();
         initializeWeights();
         initializeBiases();
+
+        vizNetwork=new VizNetwork( inputNodes,  hiddenLayers,  hiddenNodes,  outputNodes,p);
     }
 
     private void initializeDefaultValues() {
+
         this.setLearningRate(0.1);
 
         // Sigmoid is the default ActivationFunction
@@ -86,7 +95,7 @@ public class NeuralNetwork {
 
     // Guess method, input is a one column matrix with the input values
     public double[] guess(double[] input) {
-        if (input.length != inputNodes){
+        if (input.length != inputNodes) {
             throw new WrongDimensionException(input.length, inputNodes, "Input");
         } else {
             // Get ActivationFunction-object from the map by key
@@ -99,7 +108,10 @@ public class NeuralNetwork {
                 output = calculateLayer(weights[i], biases[i], output, activationFunction);
             }
 
-            return MatrixConverter.getColumnFromMatrixAsArray(output, 0);
+            double[] o=MatrixConverter.getColumnFromMatrixAsArray(output, 0);
+//            System.out.println(Arrays.toString(o));
+
+            return o;
         }
     }
 
@@ -144,6 +156,9 @@ public class NeuralNetwork {
                 SimpleMatrix previousError = weights[n - 1].transpose().mult(errors);
                 target = previousError.plus(layers[n - 1]);
             }
+
+            //
+            vizNetwork.update(layers,weights,biases);
         }
     }
 
@@ -173,7 +188,31 @@ public class NeuralNetwork {
     private SimpleMatrix applyActivationFunction(SimpleMatrix input, boolean derivative, ActivationFunction activationFunction) {
         // Applies either derivative of activation function or regular activation function to a matrix and returns the result
         return derivative ? activationFunction.applyDerivativeOfActivationFunctionToMatrix(input)
-                          : activationFunction.applyActivationFunctionToMatrix(input);
+                : activationFunction.applyActivationFunctionToMatrix(input);
+    }
+
+
+    /*void mutate(float rate) {
+
+        for (:weights.             ) {
+
+        }
+    }*/
+
+    public void initVizNetwork(PApplet p){
+        vizNetwork=new VizNetwork( inputNodes,  hiddenLayers,  hiddenNodes,  outputNodes,p);
+    }
+
+    float function_mutate(float val) {
+        if (Math.random() < rate) {
+            return (float) Math.random() * 2 - 1;
+        } else
+            return val;
+    }
+
+    public void display(){
+        if(vizNetwork!=null)
+            vizNetwork.display();
     }
 
     public void writeToFile() {
@@ -192,7 +231,7 @@ public class NeuralNetwork {
         this.activationFunctionKey = activationFunction;
     }
 
-    public void addActivationFunction(String key, ActivationFunction activationFunction){
+    public void addActivationFunction(String key, ActivationFunction activationFunction) {
         activationFunctionFactory.addActivationFunction(key, activationFunction);
     }
 
