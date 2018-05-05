@@ -9,6 +9,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="core" level="project" />
     <orderEntry type="library" name="Maven: org.ejml:ejml-all:0.33" level="project" />
     <orderEntry type="library" name="Maven: org.ejml:ejml-core:0.33" level="project" />
     <orderEntry type="library" name="Maven: org.ejml:ejml-fdense:0.33" level="project" />
@@ -18,6 +19,6 @@
     <orderEntry type="library" name="Maven: org.ejml:ejml-dsparse:0.33" level="project" />
     <orderEntry type="library" name="Maven: org.ejml:ejml-simple:0.33" level="project" />
     <orderEntry type="library" name="Maven: com.google.code.gson:gson:2.8.4" level="project" />
-    <orderEntry type="library" name="core" level="project" />
+    <orderEntry type="library" name="Maven: org.processing:core:3.3.6" level="project" />
   </component>
 </module>
