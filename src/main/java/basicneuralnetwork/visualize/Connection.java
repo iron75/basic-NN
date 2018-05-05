@@ -14,7 +14,7 @@ public class Connection {
 
     private Neuron from;     // Connection goes from. . .
     private Neuron to;       // To. . .
-     float weight;   // Weight of the connection. . .
+    float weight;   // Weight of the connection. . .
 
     // Constructor  builds a connection with a random weight
     public Connection(Neuron a_, Neuron b_, PApplet p) {
@@ -29,8 +29,8 @@ public class Connection {
         to = b_;
         weight = w;
 
-        if(p.abs(weight)>VizNetwork.max_weight)       //for drawing strokeweight
-            VizNetwork.max_weight=weight;
+        if (p.abs(weight) > VizNetwork.max_weight)       //for drawing strokeweight
+            VizNetwork.max_weight = weight;
     }
 
 
@@ -49,7 +49,9 @@ public class Connection {
 
         if (Main.DEBUG == 1) {
             p.fill(102, 153, 255);
-            p.text(p.nfc(weight, 2), (to.pos.x - from.pos.x) / 2 + from.pos.x + 20, (to.pos.y - from.pos.y) / 2 + from.pos.y);
+
+//            if (from.name.equals("i0"))
+                p.text(p.nfc(weight, 2), (to.pos.x - from.pos.x) / 2 + from.pos.x + 20, (to.pos.y - from.pos.y) / 2 + from.pos.y);
         }
     }
 
@@ -69,8 +71,8 @@ public class Connection {
     public void adjustWeight(float deltaWeight) {
         weight += deltaWeight;
 
-        if(p.abs(weight)>VizNetwork.max_weight)   //for drawing strokeweight
-            VizNetwork.max_weight=weight;
+        if (p.abs(weight) > VizNetwork.max_weight)   //for drawing strokeweight
+            VizNetwork.max_weight = weight;
     }
 
 }

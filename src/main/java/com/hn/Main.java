@@ -4,6 +4,9 @@ import basicneuralnetwork.NeuralNetwork;
 import org.ejml.simple.SimpleMatrix;
 import processing.core.PApplet;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 public class Main extends PApplet {
     public static final int DEBUG = 1;
@@ -11,7 +14,7 @@ public class Main extends PApplet {
     NeuralNetwork nn;
 
     private boolean right_mouse_pressed;
- 
+
     int count, countTmp;
     int success, successTmp;
 
@@ -19,6 +22,7 @@ public class Main extends PApplet {
     public static void main(String[] args) {
         PApplet.main("com.hn.Main", args);
     }
+
 
     @Override
     public void settings() {
@@ -29,7 +33,7 @@ public class Main extends PApplet {
     public void setup() {
         smooth();
 
-        nn = new NeuralNetwork(2, 2, 4, 1, this);
+        nn = new NeuralNetwork(2, 1, 4, 1, this);
 
         /*// Training
         for (int i = 0; i < 5000; i++) {
@@ -38,6 +42,14 @@ public class Main extends PApplet {
             test[1] = (int) random(2);
             nn.train(test, xor(test));
         }*/
+
+
+        NeuralNetwork child = nn.copy();
+
+        child.mutate(1);
+
+        System.out.println(nn.biases[0]);
+        System.out.println(child.biases[0]);
 
 
     }
@@ -109,6 +121,7 @@ public class Main extends PApplet {
     public void mousePressed() {
         if (mouseButton == LEFT) {
             train();
+            mutate();
         }
 
         if (mouseButton == RIGHT) {
@@ -142,6 +155,7 @@ public class Main extends PApplet {
 
                 count++;
             }
+
         }
 
         // Writes a JSON-file with the current "state" (weights and biases) of the NN
@@ -155,6 +169,20 @@ public class Main extends PApplet {
             System.out.println("load NN");
             nn = NeuralNetwork.readFromFile();
             nn.initVizNetwork(this);
+        }
+
+
+        if (keyCode == 'M') {
+            mutate();
+        }
+    }
+
+    void mutate(){
+        try {
+            nn.mutate(1f);
+            System.out.println("#Mutate");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

@@ -136,9 +136,15 @@ public class VizNetwork {
                 c.display();
             }
 
+
+
+
+
+
             //draw neuron
             for (Neuron n : input) {
                 n.display();
+
             }
             for (int i = 0; i < hiddenLayers; i++) {
                 for (Neuron n : hidden[i]) {

@@ -5,16 +5,23 @@ import basicneuralnetwork.utilities.FileReaderAndWriter;
 import basicneuralnetwork.utilities.MatrixConverter;
 import basicneuralnetwork.visualize.Neuron;
 import basicneuralnetwork.visualize.VizNetwork;
+import jdk.nashorn.internal.runtime.ECMAException;
 import org.ejml.simple.SimpleMatrix;
 import processing.core.PApplet;
 
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Random;
+import java.util.concurrent.Callable;
+import java.util.function.DoubleBinaryOperator;
+import java.util.function.DoubleUnaryOperator;
 
 /**
  * Created by KimFeichtinger on 04.03.18.
  */
 public class NeuralNetwork {
+    transient PApplet p;
+
     public transient VizNetwork vizNetwork;
 
     private ActivationFunctionFactory activationFunctionFactory = new ActivationFunctionFactory();
@@ -33,28 +40,40 @@ public class NeuralNetwork {
     private double learningRate;
 
     private String activationFunctionKey;
+    private double rate;
 
+    //for flappy bird, copy yourself
+    public NeuralNetwork(NeuralNetwork nn) {
+        this(nn.inputNodes, nn.hiddenLayers, nn.hiddenNodes, nn.outputNodes, nn.p);
+
+        for (int i = 0; i < weights.length; i++) {
+            weights[i] = new SimpleMatrix(nn.weights[i]);
+        }
+        for (int i = 0; i < biases.length; i++) {
+            biases[i] = new SimpleMatrix(nn.biases[i]);
+        }
+    }
 
     // Constructor
     // Generate a new neural network with 1 hidden layer with the given amount of nodes in the individual layers
-    public NeuralNetwork(int inputNodes, int hiddenNodes, int outputNodes,PApplet p) {
+    public NeuralNetwork(int inputNodes, int hiddenNodes, int outputNodes, PApplet p) {
         this(inputNodes, 1, hiddenNodes, outputNodes, p);
     }
 
     // Constructor
     // Generate a new neural network with a given amount of hidden layers with the given amount of nodes in the individual layers
     // Every hidden layer will have the same amount of nodes
-    public NeuralNetwork(int inputNodes, int hiddenLayers, int hiddenNodes, int outputNodes,PApplet p) {
+    public NeuralNetwork(int inputNodes, int hiddenLayers, int hiddenNodes, int outputNodes, PApplet p) {
         this.inputNodes = inputNodes;
         this.hiddenLayers = hiddenLayers;
         this.hiddenNodes = hiddenNodes;
         this.outputNodes = outputNodes;
 
-        initializeDefaultValues();
+        initializeDefaultValues();  //todo copy
         initializeWeights();
         initializeBiases();
 
-        vizNetwork=new VizNetwork( inputNodes,  hiddenLayers,  hiddenNodes,  outputNodes,p);
+        vizNetwork = new VizNetwork(inputNodes, hiddenLayers, hiddenNodes, outputNodes, p);
     }
 
     private void initializeDefaultValues() {
@@ -107,7 +126,7 @@ public class NeuralNetwork {
                 output = calculateLayer(weights[i], biases[i], output, activationFunction);
             }
 
-            double[] o=MatrixConverter.getColumnFromMatrixAsArray(output, 0);
+            double[] o = MatrixConverter.getColumnFromMatrixAsArray(output, 0);
 //            System.out.println(Arrays.toString(o));
 
             return o;
@@ -157,7 +176,7 @@ public class NeuralNetwork {
             }
 
             //
-            vizNetwork.update(layers,weights,biases);
+            vizNetwork.update(layers, weights, biases);
         }
     }
 
@@ -190,22 +209,53 @@ public class NeuralNetwork {
                 : activationFunction.applyActivationFunctionToMatrix(input);
     }
 
+    //muss exra init werden, sonst NullPointerEx
+    public void initVizNetwork(PApplet p) {
+        vizNetwork = new VizNetwork(inputNodes, hiddenLayers, hiddenNodes, outputNodes, p);
+    }
 
-    /*void mutate(float rate) {
+    //for flappy, copy yourself
+    public NeuralNetwork copy() {
+        return new NeuralNetwork(this);
+    }
 
-        for (:weights.             ) {
-
+    public void mutate(float rate)  {
+        try{
+            mapMatrix(weights,rate, (d,e) -> function_mutate((float) d,(float)e));
+            mapMatrix(biases,rate, (d,e) -> function_mutate((float) d,(float)e));
         }
-    }*/
+        catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 
-    public void initVizNetwork(PApplet p){
-        vizNetwork=new VizNetwork( inputNodes,  hiddenLayers,  hiddenNodes,  outputNodes,p);
+
+    void mapMatrix(SimpleMatrix[] matrix,float rate, DoubleBinaryOperator func) throws Exception {
+        for (int i = 0; i < matrix.length; i++) {
+            SimpleMatrix m = matrix[i];
+
+            for (int j = 0; j < m.numCols(); j++) {
+                for (int k = 0; k < m.numRows(); k++) {
+                    m.set(k, j, func.applyAsDouble(m.get(k, j),rate));
+                }
+            }
+        }
+    }
+
+    double function_mutate(float val, float rate) {
+        if (Math.random() < rate) {     //mutionrate
+            return (float) 10;   //mutate to new random number
+//            return (float) Math.random() * 2 - 1;   //mutate to new random number
+        } else
+            return val;                 //else dont mutate
     }
 
 
 
-    public void display(){
-        if(vizNetwork!=null)
+
+
+    public void display() {
+        if (vizNetwork != null)
             vizNetwork.display();
     }
 
